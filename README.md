@@ -6,6 +6,12 @@ so they will output a `<meta name="robots" content="noindex" />` tag.
 
 This tells the search-engines not to index you page/post.
 
+Coverage
+--------
+This plugin is thoroughly tested using PHPUnit.
+
+![](media/screenshot-coverage.png)
+
 Installation
 ------------
 
