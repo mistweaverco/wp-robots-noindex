@@ -11,6 +11,9 @@ License:     MIT License
 
 if( !defined( 'ABSPATH' ) ) exit;
 
+const ROBOTSNOINDEX_NOINDEX = 1;
+const ROBOTSNOINDEX_NOFOLLOW = 2;
+
 function robotsnoindex_post_types() {
         return apply_filters('noindex-pages-post-types', array('post', 'page'));
 }
@@ -24,50 +27,91 @@ function robotsnoindex_enqueue_css() {
 
 add_action('admin_enqueue_scripts', 'robotsnoindex_enqueue_css');
 
-function robotsnoindex_display_meta_checkbox() {
-        global $post;
-        if (empty($post->ID))
-                return;
-        $robotsnoindex_enabled = get_post_meta($post->ID, 'robotsnoindex', true);
+function robotsnoindex_create_checkbox($name, $label, $checked=false) {
         echo '<div class="misc-pub-section misc-robotsnoindex">'
-        . '<input type="checkbox" name="robotsnoindex_post" id="robotsnoindex_post" '
-        .  checked($robotsnoindex_enabled) . ' /> '
-        . '<label for="robotsnoindex_post">Hide from search engines</label>'
+        . '<input type="checkbox" name="'.$name.'" id="'.$name.'" '
+        .  checked($checked) . ' /> '
+        . '<label for="'.$name.'">Hide from search engines</label>'
         . '</div>';
 }
 
-add_action('post_submitbox_misc_actions', 'robotsnoindex_display_meta_checkbox', 3);
+function robotsnoindex_display_meta_checkboxes() {
+        global $post;
+        if (empty($post->ID))
+                return;
+        robotsnoindex_create_checkbox(
+                'robotsnoindex_post',
+                'Hide from search engines',
+                get_post_meta($post->ID, 'robotsnoindex', true)
+        );
+        robotsnoindex_create_checkbox(
+                'robotsnofollow_post',
+                'Forbid search enginges to follow links',
+                get_post_meta($post->ID, 'robotsnofollow', true)
+        );
+}
+
+add_action('post_submitbox_misc_actions', 'robotsnoindex_display_meta_checkboxes', 3);
 
 function robotsnoindex_save_meta( $post_id ) {
         if (in_array( get_post_type( $post_id ), robotsnoindex_post_types() )) {
                 $robotsnoindex_post = empty($_REQUEST['robotsnoindex_post']) ? 0 : 1;
+                $robotsnofollow_post = empty($_REQUEST['robotsnofollow_post']) ? 0 : 1;
                 if ($robotsnoindex_post) {
                         update_post_meta($post_id, 'robotsnoindex', 1);
                 } else{
                         delete_post_meta($post_id, 'robotsnoindex');
+                }
+                if ($robotsnofollow_post) {
+                        update_post_meta($post_id, 'robotsnofollow', 1);
+                } else{
+                        delete_post_meta($post_id, 'robotsnofollow');
                 }
         }
 }
 
 add_action('save_post', 'robotsnoindex_save_meta');
 
-function robotsnoindex_display_meta_tag() {
-        if (!is_singular())
-                return;
-        $post_type = get_post_type();
-        $hasNoIndexFlag = false;
-        if ($post_type && in_array($post_type, robotsnoindex_post_types())) {
-                $noindex = get_post_meta(get_the_ID(), 'robotsnoindex', true);
-                if ( (int) $noindex === 1 ) {
-                        $hasNoIndexFlag = true;
+function robotsnoindex_get($t) {
+        switch ($t) {
+        case ROBOTSNOINDEX_NOINDEX:
+                if (get_post_meta(get_the_ID(), 'robotsnoindex', true)) {
+                        return true;
+                } else {
+                        return false;
                 }
-        }
-        if ($hasNoIndexFlag) {
-                        echo '<meta name="robots" content="noindex" />' . "\n";
-        } else {
-                        echo '<meta name="robots" content="index,follow"/>' . "\n";
+                break;
+        case ROBOTSNOINDEX_NOFOLLOW:
+                if (get_post_meta(get_the_ID(), 'robotsnofollow', true)) {
+                        return true;
+                } else {
+                        return false;
+                }
+                break;
+        default:
+                return false;
+                break;
         }
 }
 
-add_action( 'wp_head', 'robotsnoindex_display_meta_tag' );
+function robotsnoindex_is_in_post_types() {
+        $post_type = get_post_type();
+        return ($post_type && in_array($post_type, robotsnoindex_post_types()));
+}
+
+function robotsnoindex_display_meta_tag() {
+        if (!is_singular())
+                return;
+        $noindex = false;
+        $nofollow = false;
+        if (robotsnoindex_is_in_post_types()) {
+                $noindex = robotsnoindex_get(ROBOTSNOINDEX_NOINDEX);
+                $nofollow = robotsnoindex_get(ROBOTSNOINDEX_NOFOLLOW);
+        }
+        $content = (($noindex) ? 'noindex' : 'index') . ',' .
+                (($nofollow) ? 'nofollow' : 'follow');
+        echo '<meta name="robots" content="'.$content.'"/>' . "\n";
+}
+
+add_action('wp_head', 'robotsnoindex_display_meta_tag');
 
