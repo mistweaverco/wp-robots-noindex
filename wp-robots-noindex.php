@@ -29,12 +29,11 @@ function robotsnoindex_display_meta_checkbox() {
         if (empty($post->ID))
                 return;
         $robotsnoindex_enabled = get_post_meta($post->ID, 'robotsnoindex', true);
-        ?>
-<div class="misc-pub-section misc-robotsnoindex">
-        <input type="checkbox" name="robotsnoindex_post" id="robotsnoindex_post" <?php checked($robotsnoindex_enabled); ?> />
-        <label for="robotsnoindex_post">Hide from search engines</label>
-</div>
-        <?php
+        echo '<div class="misc-pub-section misc-robotsnoindex">'
+        . '<input type="checkbox" name="robotsnoindex_post" id="robotsnoindex_post" '
+        .  checked($robotsnoindex_enabled) . ' /> '
+        . '<label for="robotsnoindex_post">Hide from search engines</label>'
+        . '</div>';
 }
 
 add_action('post_submitbox_misc_actions', 'robotsnoindex_display_meta_checkbox', 3);
