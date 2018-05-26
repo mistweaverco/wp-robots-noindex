@@ -45,12 +45,12 @@ function robotsnoindex_display_meta_checkboxes() {
                 return;
         robotsnoindex_create_checkbox(
                 'robotsnoindex_post',
-                'Hide from search engines',
+                'Robots: NoIndex',
                 get_post_meta($post->ID, 'robotsnoindex', true)
         );
         robotsnoindex_create_checkbox(
                 'robotsnofollow_post',
-                'Forbid search enginges to follow links',
+                'Robots: NoFollow',
                 get_post_meta($post->ID, 'robotsnofollow', true)
         );
 }
