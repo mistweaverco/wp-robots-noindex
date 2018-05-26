@@ -31,7 +31,7 @@ function robotsnoindex_create_checkbox($name, $label, $checked=false) {
         echo '<div class="misc-pub-section misc-robotsnoindex">'
         . '<input type="checkbox" name="'.$name.'" id="'.$name.'" '
         .  checked($checked) . ' /> '
-        . '<label for="'.$name.'">Hide from search engines</label>'
+        . '<label for="'.$name.'">'.$label.'</label>'
         . '</div>';
 }
 
