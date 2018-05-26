@@ -27,10 +27,14 @@ function robotsnoindex_enqueue_css() {
 
 add_action('admin_enqueue_scripts', 'robotsnoindex_enqueue_css');
 
+function robotsnoindex_checkedhelper($checked=false) {
+        return ($checked) ? ' checked="checked" ' : '';
+}
+
 function robotsnoindex_create_checkbox($name, $label, $checked=false) {
         echo '<div class="misc-pub-section misc-robotsnoindex">'
-        . '<input type="checkbox" name="'.$name.'" id="'.$name.'" '
-        .  checked($checked) . ' /> '
+        . '<input type="checkbox" name="'.$name.'" id="'.$name.'"'
+        .  robotsnoindex_checkedhelper($checked) . '/> '
         . '<label for="'.$name.'">'.$label.'</label>'
         . '</div>';
 }
