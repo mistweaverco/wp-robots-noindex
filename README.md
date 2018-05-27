@@ -21,7 +21,10 @@ then change to `wp-content/plugins`.
 Then either run (the preferred way):
 
 ```bash
-git clone https://github.com/superevilmegaco/wp-robots-noindex.git wp-robots-noindex
+git clone \
+https://github.com/superevilmegaco/wp-robots-noindex.git \
+-b v3.0.1 \
+wp-robots-noindex
 ```
 
 or (no easy updating via `git` or `git submodules`)

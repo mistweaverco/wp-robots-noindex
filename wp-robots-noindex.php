@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: WP Robots NoIndex
-Version:     1.0.0
+Version:     3.0.1
 Plugin URI:  https://apps.walialu.com/wp-robots-noindex/
 Description: Ask search engines not to index individual pages by checking an option in the publish post box.
 Author:      Marco Kellershoff
